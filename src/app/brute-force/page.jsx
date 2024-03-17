@@ -2,20 +2,40 @@
 import React, { useState, useEffect } from 'react'; // Tambahkan impor useEffect
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import Image from "next/image";
+import { bruteForceBezierCurve } from '../../utils/bruteforce';
 
 function BruteforceClient({points}) {
   // No state needed here; points are passed as props
-
+  // Mengurutkan titik berdasarkan nilai karena pustaka ini tidak melakukan pengurutan dalam penampilan kurvanya
+  const map = points.map(([x, y]) => ({ x, y }));
   // Chart component
+
   return (
-    <LineChart width={600} height={600} data={points}>
-      <Line type="monotone" dataKey="y" stroke="#8884d8" />
+    <LineChart width={600} height={600} data={map}>
+      <Line type="linear" dataKey="y" stroke="#8884d8" />
       <CartesianGrid stroke="#ccc" />
       <XAxis dataKey="x" />
       <YAxis />
       <Tooltip />
     </LineChart>
   );
+}
+
+function bruteforcealgorithms({ points, iteration, setBezierPoint }) {
+  // Menghitung titik dengan brute force
+  const calculateBezierPoints = () => {
+    const sortedPoints = points.slice().sort((a, b) => a.x - b.x);
+    const numIterations = parseInt(iteration) * (points.length-1); // Pastikan numIterations berupa angka
+    const curvePoints = [];
+    for (let i = 0; i < numIterations+1; i++) {
+      const t = i / (numIterations);
+      curvePoints.push(bruteForceBezierCurve(t, sortedPoints));
+    }
+    setBezierPoint(curvePoints);
+  };
+
+  // Panggil calculateBezierPoints langsung
+  calculateBezierPoints();
 }
 
 function PointsInput({mode, numPoints, setInputPoints, setIteration, numIterations}) {
@@ -123,17 +143,23 @@ export default function Bruteforce() {
   const [inputPoints, setInputPoints] = useState([]); // To store input points from form
   const [bezierPoints, setBezierPoints] = useState([]);
   const [iteration, setIteration] = useState();
+  const [executionTime, setExecutionTime] = useState();
 
   // Function to handle the form submission
   const handleSubmit = (event) => {
-    event.preventDefault();// Update the inputPoints state
-    setBezierPoints(inputPoints);
-    console.log("SUBMITTED");
-    console.log(iteration);
+    event.preventDefault(); // Update the inputPoints state
+    const timeStart = performance.now();
+    console.log("Time Start: ",timeStart);
+    bruteforcealgorithms({ points: inputPoints, iteration: iteration, setBezierPoint: setBezierPoints });
+    const timeEnd = performance.now();
+    const timeElapsed = timeEnd-timeStart;
+    console.log("Time End: ",timeEnd);
+    setExecutionTime(timeElapsed);
+    console.log(timeElapsed);
+    console.log("Hasil bezier Points dengan Algoritma Brute Force :");
+    console.log(bezierPoints);
   };
   
-
-
   useEffect(() => {
     // Do something with inputPoints when it changes
     console.log("Input points changed:", inputPoints);
@@ -162,7 +188,7 @@ export default function Bruteforce() {
       <div className="relative flex lg:flex-row md:flex-col sm:flex-col place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[1000px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[800px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[1]">
         <div className="m-[25px] h-[700px] border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-[700px]  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           <p className="mb-3 text-xl font-semibold">Bezier Curve Ilustration</p>
-          <BruteforceClient points={inputPoints} />
+          <BruteforceClient points={bezierPoints} />
         </div>
         <div className="m-[25px]  z-50 border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-[400px]  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 h-fit">
           <div className="m-4 p-4">
@@ -176,7 +202,7 @@ export default function Bruteforce() {
 
                 {mode == '3-Points' && <PointsInput mode={mode} numPoints={3} setInputPoints={setInputPoints} numIterations={iteration} setIteration={setIteration} />}
                 {mode == 'N-Points' && <PointsInput mode={mode} numPoints={5} setInputPoints={setInputPoints} numIterations={iteration} setIteration={setIteration} />}
-              
+                <p className='mt-[16px]'>Time Elapsed: {executionTime} ms</p>
               </div>
               <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-[35px]">
                 Submit
