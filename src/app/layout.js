@@ -4,7 +4,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Curving",
+  title: "Curving - Bezier Curve Program",
   description: "Bezier Curve Program",
 };
 

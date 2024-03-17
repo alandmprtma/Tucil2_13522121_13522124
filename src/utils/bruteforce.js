@@ -1,4 +1,4 @@
-// utils/BezierUtils.js
+// utils/bruteforce.js
 
 export const bruteForceBezierCurve = (t, controlPoints) => {
     // Menghitung titik yang ada pada kurva bezier menggunakan pendekatan brute force

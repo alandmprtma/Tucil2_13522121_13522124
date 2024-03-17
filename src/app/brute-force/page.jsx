@@ -5,7 +5,7 @@ import Image from "next/image";
 import { bruteForceBezierCurve } from '../../utils/bruteforce';
 
 function BruteforceClient({points}) {
-  // No state needed here; points are passed as props
+  // passing data titik digunakan sebagai state
   // Mengurutkan titik berdasarkan nilai karena pustaka ini tidak melakukan pengurutan dalam penampilan kurvanya
   const map = points.map(([x, y]) => ({ x, y }));
   // Chart component
@@ -16,7 +16,7 @@ function BruteforceClient({points}) {
       <CartesianGrid stroke="#ccc" />
       <XAxis dataKey="x" />
       <YAxis />
-      <Tooltip />
+      <Tooltip formatter={(value, name, props) => [value, props.payload.x]}/>
     </LineChart>
   );
 }
@@ -39,41 +39,25 @@ function bruteforcealgorithms({ points, iteration, setBezierPoint }) {
 }
 
 function PointsInput({mode, numPoints, setInputPoints, setIteration, numIterations}) {
-  // Initialize points with empty objects for each point
+  // Inisialisasi titik dengan objek kosong
   const [jumlahTitik, setJumlahTitik] = useState(numPoints)
   const [points, setPoints] = useState(
     Array.from({ length: jumlahTitik }, () => ({ x: '', y: '' }))
   );
   
   useEffect(() => {
-    // Create a new array with the updated length
+    // Membuat array baru dengan panjang baru
     const updatedPoints = Array.from({ length: jumlahTitik }, (_, index) => {
-      // If index is within the range of the old array, use the existing point
+      // Kalau indeks masih memiliki panjang yang sama dengan array, gunakan titik yang sudah ada
       if (index < points.length) {
         return points[index];
       } else {
-        // Otherwise, create a new point with empty values
+        // Jika tidak, buat titik baru dengan nilai kosong
         return { x: '', y: '' };
       }
     });
-    // Set the new points array
+    // Buat array point baru
     setPoints(updatedPoints);
-  }, [jumlahTitik]);
-
-  useEffect(() => {
-    // Create a new array with the updated length
-    const updatedPoints = Array.from({ length: jumlahTitik }, (_, index) => {
-      // If index is within the range of the old array, use the existing point
-      if (index < points.length) {
-        return points[index];
-      } else {
-        // Otherwise, create a new point with empty values
-        return { x: '', y: '' };
-      }
-    });
-    // Set the new points array
-    setPoints(updatedPoints);
-    setInputPoints(updatedPoints);
   }, [jumlahTitik]);
 
   useEffect(() => {
@@ -82,16 +66,16 @@ function PointsInput({mode, numPoints, setInputPoints, setIteration, numIteratio
     console.log("Points Updated");
   }, [points]);
 
-  // Handle change in point input
+  // Menangani perubahan point pada input
   const handlePointChange = (index, coord, value) => {
     const updatedPoints = points.map((point, i) =>
       i === index ? { ...point, [coord]: value } : point
     );
     setPoints(updatedPoints);
-    // onPointsChange(updatedPoints); // Send back the updated points to the parent component
+    // onPointsChange(updatedPoints); // Kirim balik titik yang sudah di perbarui ke component utama
   };
 
-  // Render input fields for points
+  // Form input untuk titik baik untuk N points maupun 3 titik
   return (
     <div>
     {mode === 'N-Points' && (
@@ -128,26 +112,26 @@ function PointsInput({mode, numPoints, setInputPoints, setIteration, numIteratio
            
     </div>
     ))}
-    {/* Input for number of iterations */}
+    {/* Input untuk jumlah iterasi */}
     <div className='ml-4 space-x-4 space-y-2'>
       <label>Number of Iterations:</label>
       <input type="number" className="bg-white text-black p-1 rounded border border-gray-300 w-[75px]" value={numIterations} onChange={(e) => setIteration(Number(e.target.value))}/>
     </div>
-    {/* Input for number of desired points (only for 'N-Points' mode) */}
+   {/*  Input jumlah poin yang diinginkan (hanya untuk mode 'N-Points')  */}
     </div>
     );
 }
 
 export default function Bruteforce() {
-  const [mode, setMode] = useState('3-Points'); // Control the input mode
-  const [inputPoints, setInputPoints] = useState([]); // To store input points from form
+  const [mode, setMode] = useState('3-Points'); // Kontrol mode masukkan
+  const [inputPoints, setInputPoints] = useState([]); // menyimpanan inputan titik dari form
   const [bezierPoints, setBezierPoints] = useState([]);
   const [iteration, setIteration] = useState();
   const [executionTime, setExecutionTime] = useState();
 
-  // Function to handle the form submission
+  // Fungsi yang mengatasi inputan dari formulir ketika tombol submit diclick
   const handleSubmit = (event) => {
-    event.preventDefault(); // Update the inputPoints state
+    event.preventDefault(); // Mengupdate  input points
     const timeStart = performance.now();
     console.log("Time Start: ",timeStart);
     bruteforcealgorithms({ points: inputPoints, iteration: iteration, setBezierPoint: setBezierPoints });
@@ -161,7 +145,7 @@ export default function Bruteforce() {
   };
   
   useEffect(() => {
-    // Do something with inputPoints when it changes
+    // Melakukan sesuatu saat ada perubahaan inputan
     console.log("Input points changed:", inputPoints);
     console.log(inputPoints);
   }, [inputPoints]);
