@@ -189,7 +189,7 @@ export default function Bruteforce() {
         <div className="m-[25px] h-[700px] border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl 
         dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-[700px]  lg:rounded-xl lg:border 
         lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          <p className="mb-3 text-xl font-semibold">Bezier Curve Ilustration</p>
+          <p className="mb-3 text-xl font-semibold">Bezier Curve Illustration</p>
           <BruteforceClient points={bezierPoints} inputPoints={input}/>
         </div>
         <div className="m-[25px]  z-50 border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl 
