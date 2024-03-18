@@ -1,14 +1,13 @@
 // utils/divnconquer.js
 
-// Defining the Point class
 
-// Function to calculate midpoint
+// Fungsi untuk melakukan kalkulasi modpoint atau titik tengah
 const midpoint = (p1, p2) => ({
   x: (p1.x + p2.x) / 2,
   y: (p1.y + p2.y) / 2
 });
 
-// Function to reduce points using divide and conquer
+// Fungsi untuk melakukan reduksi titik menggunakan algoritma divide and conquer
 export const divncon = (arr, left, right, iter, iterations, setBezierPoint) => {
   let leftArr = [arr[0]];
   let rightArr = [arr[arr.length - 1]];
