@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react'; // Tambahkan impor useEffect
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import Image from "next/image";
 import { divncon } from '../../utils/divnconquer';
 
@@ -8,19 +8,35 @@ function DivideConquerClient({points, inputPoints}) {
   // passing data titik digunakan sebagai state
   // Mengurutkan titik berdasarkan nilai karena pustaka ini tidak melakukan pengurutan dalam penampilan kurvanya
   // Chart component
-  const converted = points.length > 0 ? points[0].map(item => ({ x: item.x, y: item.y })) : [];
-  converted.push(inputPoints[0]); //titik awal
-  converted.push(inputPoints[inputPoints.length - 1]); //titik akhir
-  const sortedPoints = converted.slice().sort((a, b) => a.x - b.x);
+  const converted = points && points.length > 0 
+    ? points[0].map(item => ({ x: item.x, y: item.y })) 
+    : [];
+  const sortedInput = inputPoints && inputPoints.length 
+    ? inputPoints.slice().sort((a, b) => a.x - b.x) 
+    : [];
 
+  if (sortedInput.length > 0) {
+    converted.push(sortedInput[0]); //titik awal
+    converted.push(sortedInput[sortedInput.length - 1]); //titik akhir
+  }
+  const sortedPoints = converted.length 
+    ? converted.slice().sort((a, b) => a.x - b.x) 
+    : [];
+  console.log("Masukan titik kontrol : ");
+  console.log(sortedInput);
+  console.log("Hasil bezier Points dengan Algoritma Divide & Conquer : ");
   console.log(converted);
+
   return (
-    <LineChart width={600} height={600} data={sortedPoints}>
-      <Line type="linear" dataKey="y" stroke="#8884d8" />
-      <CartesianGrid stroke="#ccc" />
-      <XAxis dataKey="x" />
-      <YAxis />
-      <Tooltip formatter={(value, name, props) => [value, props.payload.x]}/>
+    <LineChart width={600} height={600} >
+    <CartesianGrid strokeDasharray="3 3" />
+        <XAxis type="number" dataKey="x" domain={['auto', 'auto']} allowDataOverflow />
+        <YAxis type="number" domain={['auto', 'auto']} allowDataOverflow />
+        <Legend />
+        <Line type="linear" dataKey="y" name="Bezier Curve" stroke="#8884d8" data={sortedPoints} dot={{ fill: 'blue' }} />
+        <Line type="linear" dataKey="y" name="Control Points" stroke="#82ca9d" data={sortedInput} dot={{ fill: 'green' }} />
+        <Tooltip formatter={(value, name, props) => [value, props.payload.x]} />
+
     </LineChart>
   );
 }
@@ -30,7 +46,8 @@ function divideconqueralgorithms({ points, iteration, setBezierPoint }) {
   const calculateBezierPoints = () => {
     const numIterations = parseInt(iteration); // Pastikan numIterations berupa angka
     const curvePoints = [];
-    curvePoints.push(divncon(points, [], [], 0, numIterations, setBezierPoint));
+    const sorted = points.slice().sort((a, b) => a.x - b.x);
+    curvePoints.push(divncon(sorted, [], [], 0, numIterations, setBezierPoint));
 
     setBezierPoint(curvePoints);
   };
@@ -134,15 +151,10 @@ export default function DivideConquer() {
   const handleSubmit = (event) => {
     event.preventDefault(); // Mengupdate  input points
     const timeStart = performance.now();
-    console.log("Time Start: ",timeStart);
     divideconqueralgorithms({ points: inputPoints, iteration: iteration, setBezierPoint: setBezierPoints });
     const timeEnd = performance.now();
     const timeElapsed = timeEnd-timeStart;
-    console.log("Time End: ",timeEnd);
     setExecutionTime(timeElapsed);
-    console.log(timeElapsed);
-    console.log("Hasil bezier Points dengan Algoritma Divide & Conquer :");
-    console.log(bezierPoints);
   };
   
   useEffect(() => {
