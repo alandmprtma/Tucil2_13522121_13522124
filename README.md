@@ -27,9 +27,10 @@ In this project, we aim to demonstrate the efficiency of the divide and conquer 
 ## 🏃‍♂️ How to Run
 1. Change the terminal directory to `Tucil2_13522121_13522124/src`.
 2. Execute `npm run dev` or you can also execute `npm run start`.
-3. Navigate to the brute-force page or div-n-conquer via the website's `Navigation Bar` and input the points and also the iterations using the `input` form.
-4. Alternatively, you can input more than 3 control points by using the `3 points & n points` toggle button in the `input` form.
-5. Once you click submit button you can see the bezier curve illustration at the `Bezier Curve Illustration` container.
+3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Navigate to the brute-force page or div-n-conquer via the website's `Navigation Bar` and input the points and also the iterations using the `input` form.
+5. Alternatively, you can input more than 3 control points by using the `3 points & n points` toggle button in the `input` form.
+6. Once you click submit button you can see the bezier curve illustration at the `Bezier Curve Illustration` container.
 
 ## 📸 Screenshots
 
